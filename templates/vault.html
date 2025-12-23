@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block title %}密码库 - 密码管理器{% endblock %}
+
+{% block content %}
+<!-- 移动端菜单按钮 -->
+<button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="打开菜单">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <line x1="3" y1="12" x2="21" y2="12" stroke-width="2" />
+        <line x1="3" y1="6" x2="21" y2="6" stroke-width="2" />
+        <line x1="3" y1="18" x2="21" y2="18" stroke-width="2" />
+    </svg>
+</button>
+
+<div class="vault-container">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-small">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L2 7v10c0 5.5 3.8 10.7 10 12 6.2-1.3 10-6.5 10-12V7l-10-5z" fill="url(#gradient)"
+                        stroke="url(#gradient)" stroke-width="1.5" />
+                    <circle cx="12" cy="12" r="3" fill="#0f172a" />
+                    <defs>
+                        <linearGradient id="gradient" x1="2" y1="2" x2="22" y2="22">
+                            <stop offset="0%" stop-color="#6366f1" />
+                            <stop offset="100%" stop-color="#3b82f6" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <h2>密码库</h2>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-filter="all">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                </svg>
+                <span>全部项目</span>
+                <span class="count" id="allCount">0</span>
+            </a>
+            <a href="#" class="nav-item" data-filter="favorites">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polygon
+                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+                <span>收藏夹</span>
+                <span class="count" id="favCount">0</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-section">
+            <div class="section-header">
+                <h3>分类</h3>
+                <button class="btn-icon" id="addCategoryBtn" title="添加分类">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="categoriesList"></div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="btn btn-secondary btn-small" id="lockBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <span>锁定</span>
+            </button>
+            <button class="btn-icon" id="themeToggleBtn" title="切换主题">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="search-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                </svg>
+                <input type="text" id="searchInput" placeholder="搜索密码...">
+            </div>
+            <button class="btn btn-primary" id="addEntryBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                <span>添加密码</span>
+            </button>
+        </header>
+
+        <div class="entries-grid" id="entriesGrid"></div>
+    </main>
+
+    <aside class="detail-panel" id="detailPanel">
+        <div class="detail-panel-header">
+            <h3>详细信息</h3>
+            <button class="btn-icon" id="closeDetailBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+        <div class="detail-panel-content" id="detailContent">
+            <div class="empty-state">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 2L2 7v10c0 5.5 3.8 10.7 10 12 6.2-1.3 10-6.5 10-12V7l-10-5z" />
+                </svg>
+                <p>选择一个密码条目查看详情</p>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<div class="modal" id="entryModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">添加密码</h3>
+            <button class="btn-icon" id="closeModalBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+        <form id="entryForm">
+            <input type="hidden" id="entryId">
+            <div class="form-group">
+                <label for="entryTitle">标题 *</label>
+                <input type="text" id="entryTitle" required>
+            </div>
+            <div class="form-group">
+                <label for="entryUsername">用户名</label>
+                <input type="text" id="entryUsername">
+            </div>
+            <div class="form-group">
+                <label for="entryPassword">密码 *</label>
+                <div class="password-input-group">
+                    <input type="password" id="entryPassword" required>
+                    <button type="button" class="btn-icon" id="toggleEntryPassword">
+                        <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                    </button>
+                    <button type="button" class="btn-icon" id="generatePasswordBtn" title="生成密码">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path
+                                d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="password-strength">
+                    <div class="strength-bars">
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="entryUrl">网址</label>
+                <input type="text" id="entryUrl">
+            </div>
+            <div class="form-group">
+                <label for="entryCategory">分类</label>
+                <select id="entryCategory"></select>
+            </div>
+            <div class="form-group">
+                <label for="entryNotes">备注</label>
+                <textarea id="entryNotes" rows="3"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancelBtn">取消</button>
+                <button type="submit" class="btn btn-primary">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal" id="generatorModal">
+    <div class="modal-content modal-small">
+        <div class="modal-header">
+            <h3>密码生成器</h3>
+            <button class="btn-icon" id="closeGeneratorBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+        <div class="generator-content">
+            <div class="generated-password">
+                <input type="text" id="generatedPassword" readonly>
+                <button class="btn-icon" id="copyGeneratedBtn" title="复制">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label>长度: <span id="lengthValue">16</span></label>
+                <input type="range" id="lengthSlider" min="8" max="32" value="16">
+            </div>
+
+            <div class="checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="useUppercase" checked>
+                    <span>大写字母 (A-Z)</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="useLowercase" checked>
+                    <span>小写字母 (a-z)</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="useDigits" checked>
+                    <span>数字 (0-9)</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="useSymbols" checked>
+                    <span>符号 (!@#$%...)</span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-secondary" id="regenerateBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                    </svg>
+                    <span>重新生成</span>
+                </button>
+                <button class="btn btn-primary" id="usePasswordBtn">使用此密码</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="categoryModal">
+    <div class="modal-content modal-small">
+        <div class="modal-header">
+            <h3 id="categoryModalTitle">添加分类</h3>
+            <button class="btn-icon" id="closeCategoryModalBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+        <form id="categoryForm">
+            <input type="hidden" id="categoryId">
+            <div class="form-group">
+                <label for="categoryName">分类名称 *</label>
+                <input type="text" id="categoryName" required>
+            </div>
+            <div class="form-group">
+                <label for="categoryColor">颜色</label>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="color" id="categoryColor" value="#6366f1"
+                        style="width: 60px; height: 40px; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer;">
+                    <input type="text" id="categoryColorText" value="#6366f1" placeholder="#6366f1" style="flex: 1;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>图标</label>
+                <div class="icon-picker">
+                    <button type="button" class="icon-option" data-icon="folder">📂</button>
+                    <button type="button" class="icon-option" data-icon="social">👥</button>
+                    <button type="button" class="icon-option" data-icon="bank">🏦</button>
+                    <button type="button" class="icon-option" data-icon="email">✉️</button>
+                    <button type="button" class="icon-option" data-icon="work">💼</button>
+                    <button type="button" class="icon-option" data-icon="shopping">🛒</button>
+                    <button type="button" class="icon-option" data-icon="entertainment">🎮</button>
+                    <button type="button" class="icon-option" data-icon="other">📁</button>
+                </div>
+                <input type="hidden" id="categoryIcon" value="folder">
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancelCategoryBtn">取消</button>
+                <button type="submit" class="btn btn-primary">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}
